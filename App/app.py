@@ -50,7 +50,7 @@ def loadCSVFile (file, sep=";"):
     Returns: None  
     """
     #lst = lt.newList("ARRAY_LIST") #Usando implementacion arraylist
-    lst = lt.newList() #Usando implementacion linkedlist
+    lst = lt.newList("LINKED_LIST") #Usando implementacion linkedlist
     print("Cargando archivo ....")
     t1_start = process_time() #tiempo inicial
     dialect = csv.excel()
@@ -111,7 +111,27 @@ def countElementsByCriteria(criteria, column, lst):
     """
     Retorna la cantidad de elementos que cumplen con un criterio para una columna dada
     """
-    return 0
+    infomovie = []
+    mov = input("Ingrese la ubicación del archivo donde estan los metadatos de la película, \n por ejemplo: Data/themoviesdb/SmallMoviesDetailsCleaned.csv: ")
+    loadCSVFile(mov, infomovie)
+    
+    goodcnt = 0
+    cnt = 0
+
+    counter=countElementsFilteredByColumn(criteria, column, lst) #filtrar una columna por criterio  
+    for element in infomovie:
+        if ([element][0]).get("id") in counter.get("ids"):
+            if float(([element][0]).get("vote_average")) >= 6.0:
+                goodcnt += 1
+            cnt += float(([element][0]).get("vote_average"))
+    
+    avg = cnt/int(counter.get("counter"))
+    retdict = {"average":avg, "goodfilm": goodcnt,}
+    
+    """
+    Retorna la cantidad de elementos que cumplen con un criterio para una columna dada
+    """
+    return retdict
 
 def orderElementsByCriteria(function, column, lst, elements):
     """
@@ -133,7 +153,7 @@ def main():
         inputs =input('Seleccione una opción para continuar\n') #leer opción ingresada
         if len(inputs)>0:
             if int(inputs[0])==1: #opcion 1
-                lista = loadCSVFile("Data/test.csv") #llamar funcion cargar datos
+                lista = loadCSVFile("Data/theMoviesdb\MoviesCastingRaw-small.csv") #llamar funcion cargar datos
                 print("Datos cargados, ",lista['size']," elementos cargados")
             elif int(inputs[0])==2: #opcion 2
                 if lista==None or lista['size']==0: #obtener la longitud de la lista
