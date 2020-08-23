@@ -107,6 +107,16 @@ def countElementsFilteredByColumn(criteria, column, lst):
         print("Tiempo de ejecución ",t1_stop-t1_start," segundos")
     return counter
 
+def less(element1, element2):
+    if int(element1['book_id']) < int(element2['book_id']):
+        return int(element1['book_id'])
+    return int(element2['book_id'])
+
+def greater(element1, element2):
+    if int(element1['book_id']) < int(element2['book_id']):
+        return int(element2['book_id'])
+    return int(element1['book_id'])
+
 def countElementsByCriteria(criteria, column, lst):
     """
     Retorna la cantidad de elementos que cumplen con un criterio para una columna dada
@@ -147,13 +157,16 @@ def main():
     Args: None
     Return: None 
     """
+    test_data = "Data/test.csv"
+    archivo1 = "Data/theMoviesdb\MoviesCastingRaw-small.csv"
+    archivo2 = "Data/theMoviesdb\SmallMoviesDetailsCleaned.csv"
     lista = lt.newList()   # se require usar lista definida
     while True:
         printMenu() #imprimir el menu de opciones en consola
         inputs =input('Seleccione una opción para continuar\n') #leer opción ingresada
         if len(inputs)>0:
             if int(inputs[0])==1: #opcion 1
-                lista = loadCSVFile("Data/theMoviesdb\MoviesCastingRaw-small.csv") #llamar funcion cargar datos
+                lista = loadCSVFile(archivo1) #llamar funcion cargar datos
                 print("Datos cargados, ",lista['size']," elementos cargados")
             elif int(inputs[0])==2: #opcion 2
                 if lista==None or lista['size']==0: #obtener la longitud de la lista
