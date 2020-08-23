@@ -1,6 +1,6 @@
 """
  * Copyright 2020, Departamento de sistemas y Computación, Universidad de Los Andes
- * 
+ *
  *
  * Desarrolado para el curso ISIS1225 - Estructuras de Datos y Algoritmos
  *
@@ -19,18 +19,65 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  """
 
-import config as cf
-from ADT import list as lt
 
-def selectionSort (lst, lessfunction): 
-    size =  lt.size(lst) 
-    pos1 = 1
-    while pos1 < size:
-        minimum = pos1              # minimun tiene el menor elemento conocido hasta ese momento
-        pos2 = pos1 + 1
-        while (pos2 <= size):
-            if (lessfunction (lt.getElement(lst, pos2),lt.getElement(lst, minimum))): 
-                minimum = pos2      # minimum se actualiza con la posición del nuevo elemento más pequeño
-            pos2 += 1
-        lt.exchange (lst, pos1, minimum)  # se intercambia el elemento más pequeño hasta ese punto con el elemento en pos1
-        pos1 += 1
+import pytest
+import config as cf
+from Sorting import selectionsort as sort
+from DataStructures import listiterator as it
+from ADT import list as lt
+import csv
+
+#list_type = 'ARRAY_LIST'
+list_type = 'SINGLE_LINKED'
+
+lst_books = lt.newList(list_type)
+booksfile = cf.data_dir + 'GoodReads/books.csv'
+
+
+def setUp():
+    print('Loading books')
+    loadCSVFile(booksfile, lst_books)
+    print(lst_books['size'])
+
+
+def tearDown():
+       pass
+
+
+def loadCSVFile(file, lst):
+    input_file = csv.DictReader(open(file, encoding = "utf-8"))
+    for row in input_file:
+        lt.addLast(lst, row)
+
+def printList(lst):
+    iterator = it.newIterator(lst)
+    while it.hasNext(iterator):
+        element = it.next(iterator)
+        print(element['goodreads_book_id'])
+
+def less(element1, element2):
+    if int(element1['goodreads_book_id']) < int(element2['goodreads_book_id']):
+        return True
+    return False
+
+def test_sort():
+    """
+    Lista con elementos en orden aleatorio
+    """
+    print("sorting ....")
+    sort.selectionSort(lst_books, less)
+
+def test_loading_CSV_y_ordenamiento():
+    """
+    Prueba que se pueda leer el archivo y que despues de relizar el sort, el orden este correcto
+    """
+    setUp()
+    sort.selectionSort(lst_books,less)
+    while not (lt.isEmpty(lst_books)):
+        x = int(lt.removeLast(lst_books)['goodreads_book_id'])
+        if not (lt.isEmpty(lst_books)):
+            y = int(lt.lastElement(lst_books)['goodreads_book_id'])
+        else:
+            break
+        assert x > y
+

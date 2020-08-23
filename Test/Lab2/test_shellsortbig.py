@@ -1,6 +1,6 @@
 """
  * Copyright 2020, Departamento de sistemas y Computación, Universidad de Los Andes
- * 
+ *
  *
  * Desarrolado para el curso ISIS1225 - Estructuras de Datos y Algoritmos
  *
@@ -20,28 +20,63 @@
  """
 
 
-
+import pytest
 import config as cf
+from Sorting import shellsort as sort
+from DataStructures import listiterator as it
 from ADT import list as lt
+import csv
 
-"""
-Implementación del algoritmo shellsort, basado en la propuesta de Robert Sedgewick
+#list_type = 'ARRAY_LIST'
+list_type = 'SINGLE_LINKED'
 
-Algorithms, 4th edition by Robert Sedgewick and Kevin Wayne
+lst_books = lt.newList(list_type)
+booksfile = cf.data_dir + 'GoodReads/books.csv'
 
-Se utiliza la secuencia de incrementos 3x+1: 1, 4, 13, 40, 121, 364, 1093, ..... (D. Knuth)
-Sedgewick: 1,5,19,41,109,209,929,2161,...
-"""
+def setUp():
+    print('Loading books')
+    loadCSVFile(booksfile, lst_books)
+    print(lst_books['size'])
 
-def shellSort(lst, lessfunction):
-    n = lt.size(lst)
-    h = 1
-    while h < n/3:          # Se calcula el tamaño del primer gap. La lista se h-ordena con este tamaño
-        h = 3*h + 1         # por ejemplo para n = 100, h toma un valor inical de 13 , 4, 1
-    while (h >= 1):
-        for i in range (h,n):
-            j = i
-            while (j>=h) and lessfunction (lt.getElement(lst,j+1),lt.getElement(lst,j-h+1)):
-                lt.exchange (lst, j+1, j-h+1)
-                j -=h
-        h //=3              # h se decrementa en un tercio. cuando h es igual a 1, se comporta como insertionsort
+
+def tearDown():
+       pass
+
+
+def loadCSVFile(file, lst):
+    input_file = csv.DictReader(open(file, encoding = "utf-8"))
+    for row in input_file:
+        lt.addLast(lst, row)
+
+def printList(lst):
+    iterator = it.newIterator(lst)
+    while it.hasNext(iterator):
+        element = it.next(iterator)
+        print(element['goodreads_book_id'])
+
+def less(element1, element2):
+    if int(element1['goodreads_book_id']) < int(element2['goodreads_book_id']):
+        return True
+    return False
+
+def test_sort():
+    """
+    Lista con elementos en orden aleatorio
+    """
+    print("sorting ....")
+    sort.shellSort(lst_books, less)
+
+def test_loading_CSV_y_ordenamiento():
+    """
+    Prueba que se pueda leer el archivo y que despues de relizar el sort, el orden este correcto
+    """
+    setUp()
+    sort.shellSort(lst_books,less)
+    while not (lt.isEmpty(lst_books)):
+        x = int(lt.removeLast(lst_books)['goodreads_book_id'])
+        if not (lt.isEmpty(lst_books)):
+            y = int(lt.lastElement(lst_books)['goodreads_book_id'])
+        else:
+            break
+        assert x > y
+
