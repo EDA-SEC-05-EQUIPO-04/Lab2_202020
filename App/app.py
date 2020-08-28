@@ -121,6 +121,7 @@ def countElementsByCriteria(criteria, column, lst):
     """
     Retorna la cantidad de elementos que cumplen con un criterio para una columna dada
     """
+    counter = 1
     infomovie = []
     mov = input("Ingrese la ubicación del archivo donde estan los metadatos de la película, \n por ejemplo: Data/themoviesdb/SmallMoviesDetailsCleaned.csv: ")
     loadCSVFile(mov, infomovie)
